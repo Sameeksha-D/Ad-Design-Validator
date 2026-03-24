@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,12 +21,14 @@
             --text-muted: #a0a0a0;
         }
 
-        * { box-sizing: border-box; }
-        
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.08), transparent 25%);
             color: var(--text-main);
@@ -43,12 +46,32 @@
             z-index: -1;
             animation: float 20s infinite ease-in-out alternate;
         }
-        .orb-1 { width: 300px; height: 300px; background: rgba(0, 240, 255, 0.15); top: -100px; left: -100px; }
-        .orb-2 { width: 400px; height: 400px; background: rgba(255, 0, 85, 0.1); bottom: -100px; right: -100px; animation-delay: -5s;}
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 240, 255, 0.15);
+            top: -100px;
+            left: -100px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 0, 85, 0.1);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
 
         @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(100px, 50px) rotate(180deg); }
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(100px, 50px) rotate(180deg);
+            }
         }
 
         .container {
@@ -58,7 +81,12 @@
             z-index: 10;
         }
 
-        .header { text-align: center; margin-bottom: 50px; animation: slideDown 0.8s ease-out; }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.8s ease-out;
+        }
+
         .header h1 {
             font-size: 3.5rem;
             font-weight: 800;
@@ -69,9 +97,24 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        .header p { color: var(--text-muted); font-size: 1.2rem; letter-spacing: 1px; }
 
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .glass-panel {
             background: var(--glass);
@@ -80,7 +123,7 @@
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 40px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .upload-section {
@@ -104,11 +147,13 @@
             box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
         }
 
-        input[type="file"] { display: none; }
-        
+        input[type="file"] {
+            display: none;
+        }
+
         .file-label {
             display: inline-block;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             padding: 15px 30px;
             border-radius: 50px;
             border: 1px solid var(--glass-border);
@@ -117,7 +162,11 @@
             color: var(--text-main);
             transition: all 0.3s ease;
         }
-        .file-label:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+        .file-label:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
 
         .submit-btn {
             background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
@@ -136,15 +185,33 @@
             position: relative;
             overflow: hidden;
         }
+
         .submit-btn:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 15px 30px rgba(138, 43, 226, 0.4);
         }
 
         /* Loading Screen */
-        #loader { display: none; margin-top: 20px; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(0,240,255,0.1); border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto;}
-        @keyframes spin { to { transform: rotate(360deg); } }
+        #loader {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 240, 255, 0.1);
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Results Layout */
         .results-grid {
@@ -153,46 +220,91 @@
             gap: 30px;
             animation: fadeIn 0.8s ease-out;
         }
-        
-        @media(max-width: 900px) { .results-grid { grid-template-columns: 1fr; } }
 
-        .image-col { text-align: center; }
+        @media(max-width: 900px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-col {
+            text-align: center;
+        }
+
         .image-col img {
             width: 100%;
             border-radius: 16px;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         .score-circle {
-            width: 180px; height: 180px;
+            width: 180px;
+            height: 180px;
             margin: 30px auto;
             border-radius: 50%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, rgba(20,20,20,0.8), rgba(40,40,40,0.8));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.8), rgba(40, 40, 40, 0.8));
             border: 2px solid var(--glass-border);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 0, 0, 0.3);
             position: relative;
         }
 
         .score-circle::before {
-            content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border-radius: 50%; z-index: -1;
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            z-index: -1;
             background: linear-gradient(45deg, var(--neon-blue), transparent, var(--neon-purple));
             animation: spin 4s linear infinite;
         }
 
-        .score-number { font-size: 4rem; font-weight: 800; line-height: 1; }
-        .score-good .score-number { color: var(--success); text-shadow: 0 0 20px rgba(0,255,136,0.4); }
-        .score-bad .score-number { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.4); }
-        .score-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;}
+        .score-number {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+        }
 
-        .metrics-row { display: flex; justify-content: space-around; font-size: 0.85rem; color: var(--text-muted); margin-top: 20px;}
-        
-        .lists-col { display: flex; flex-direction: column; gap: 20px; }
+        .score-good .score-number {
+            color: var(--success);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .score-bad .score-number {
+            color: var(--danger);
+            text-shadow: 0 0 20px rgba(255, 51, 102, 0.4);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .metrics-row {
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+        }
+
+        .lists-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
         .data-card {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 16px;
             padding: 25px;
             border: 1px solid var(--glass-border);
@@ -200,26 +312,63 @@
             overflow: hidden;
             transition: all 0.3s;
         }
-        .data-card:hover { background: rgba(255,255,255,0.02); }
 
-        .data-card h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; font-size: 1.3rem; letter-spacing: 1px;}
-        .pros-card h3 { color: var(--success); }
-        .cons-card h3 { color: var(--danger); }
-        .sugg-card h3 { color: var(--neon-blue); }
+        .data-card:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
 
-        ul { padding-left: 20px; margin: 0;}
-        li { margin-bottom: 12px; line-height: 1.6; color: #d1d5db; font-size: 0.95rem;}
+        .data-card h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .pros-card h3 {
+            color: var(--success);
+        }
+
+        .cons-card h3 {
+            color: var(--danger);
+        }
+
+        .sugg-card h3 {
+            color: var(--neon-blue);
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #d1d5db;
+            font-size: 0.95rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
 
     <div class="container">
         <div class="header">
-            <h1>Nexus Visual Engine</h1>
+            <h1>Visual Engine</h1>
             <p>Intelligent, Offline Computer Vision Ad Scoring</p>
         </div>
 
@@ -227,15 +376,19 @@
             <form method="POST" enctype="multipart/form-data" id="uploadForm">
                 <div class="upload-box">
                     <label class="file-label">
-                        <input type="file" name="file" id="fileInput" accept="image/*" required onchange="updateFilename()">
+                        <input type="file" name="file" id="fileInput" accept="image/*" required
+                            onchange="updateFilename()">
                         <span id="fileText">CHOOSE DESIGN FILE</span>
                     </label>
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 15px;">JPEG, PNG instantly processed strictly offline via OpenCV.</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 15px;">JPEG, PNG instantly
+                        processed strictly offline via OpenCV.</p>
                 </div>
                 <button type="submit" class="submit-btn" id="submitBtn">Initialize Neural Scan</button>
                 <div id="loader">
                     <div class="spinner"></div>
-                    <p style="color: var(--neon-blue); letter-spacing: 2px; font-size: 0.9rem; margin-top:15px; font-weight: 600;">EXECUTING MORPHOLOGICAL HEURISTICS...</p>
+                    <p
+                        style="color: var(--neon-blue); letter-spacing: 2px; font-size: 0.9rem; margin-top:15px; font-weight: 600;">
+                        EXECUTING MORPHOLOGICAL HEURISTICS...</p>
                 </div>
             </form>
         </div>
@@ -243,7 +396,7 @@
         {% if result %}
         <div class="glass-panel results-grid">
             <div class="image-col">
-                <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Analyzed Ad">
+                <img src="{{ image_data }}" alt="Analyzed Ad">
                 <div class="score-circle {% if result.score >= 6 %}score-good{% else %}score-bad{% endif %}">
                     <div class="score-number">{{ result.score }}</div>
                     <div class="score-label">out of 10</div>
@@ -282,7 +435,7 @@
         </div>
         <script>
             // Scroll to results automatically
-            window.scrollTo({ top: document.querySelector('.results-grid').offsetTop - 40, behavior: 'smooth'});
+            window.scrollTo({ top: document.querySelector('.results-grid').offsetTop - 40, behavior: 'smooth' });
         </script>
         {% endif %}
     </div>
@@ -291,16 +444,17 @@
         function updateFilename() {
             const input = document.getElementById('fileInput');
             const text = document.getElementById('fileText');
-            if(input.files.length > 0) {
+            if (input.files.length > 0) {
                 text.innerText = "SELECTED: " + input.files[0].name.toUpperCase();
                 text.style.color = "var(--neon-blue)";
             }
         }
 
-        document.getElementById('uploadForm').addEventListener('submit', function() {
+        document.getElementById('uploadForm').addEventListener('submit', function () {
             document.getElementById('submitBtn').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
         });
     </script>
 </body>
+
 </html>

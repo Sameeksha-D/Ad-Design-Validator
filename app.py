@@ -1,17 +1,14 @@
 import os
 import cv2
 import numpy as np
-import time
-from flask import Flask, request, render_template, send_from_directory
-from werkzeug.utils import secure_filename
+import base64
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'uploads')
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-def analyze_ad(filepath):
-    img = cv2.imread(filepath)
+def analyze_ad(img_bytes):
+    nparr = np.frombuffer(img_bytes, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     if img is None: return None
     
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -46,59 +43,71 @@ def analyze_ad(filepath):
     
     text_density = text_area / float(h * w)
     
-    # Continuous Fractional Scoring & Tailored Boundaries
-    total_score = 0.0
+    # Generalized Progressive Penalty Model
+    total_score = 10.0
     pros = []
     cons = []
     
-    # 1. Color (Vibrancy vs Over-saturation)
-    color_pts = max(0, 2.0 - abs(75.0 - std_s)*0.05)
-    total_score += color_pts
-    if 65 < std_s < 85: pros.append(f"Optimal color saturation variance ({std_s:.1f}).")
-    else: cons.append(f"Colors are either dull or aggressively over-saturated ({std_s:.1f}).")
-        
-    # 2. Brightness & Contrast (Balanced vs Harsh)
-    bright_pts = max(0, 2.0 - abs(130.0 - mean_v)*0.03)
-    contrast_pts = max(0, 2.0 - abs(72.0 - contrast)*0.05)
-    total_score += (bright_pts + contrast_pts) / 2.0
-    
-    if 115 < mean_v < 145 and contrast < 78:
-        pros.append(f"Excellent cinematic exposure and smooth contrast (Brightness: {mean_v:.1f}).")
+    # 1. Exposure & Brightness (Mean V)
+    if mean_v > 220:
+        penalty = (mean_v - 220) * 0.1
+        total_score -= penalty
+        cons.append(f"Image is overexposed / washed out (Brightness: {mean_v:.1f}).")
+    elif mean_v < 60:
+        total_score -= 1.5
+        cons.append(f"Image is too dark to read easily (Brightness: {mean_v:.1f}).")
     else:
-        cons.append(f"Lighting is either glaringly overexposed or flat (Brightness: {mean_v:.1f}, Contrast: {contrast:.1f}).")
+        pros.append(f"Excellent cinematic exposure mapping (Brightness: {mean_v:.1f}).")
         
-    # 3. Clutter
-    clutter_pts = max(0, 2.0 - (edge_density * 40.0))
-    total_score += clutter_pts
-    if edge_density < 0.0325:
-        pros.append(f"Clean design utilizing proper negative space (Edge density: {edge_density:.3f}).")
+    # 2. Contrast Depth
+    if contrast > 80:
+        penalty = (contrast - 80) * 0.15
+        total_score -= penalty
+        cons.append(f"Contrast is extremely harsh and noisy (Contrast: {contrast:.1f}).")
+    elif contrast < 35:
+        total_score -= 1.5
+        cons.append(f"Image is washed out and lacks depth (Contrast: {contrast:.1f}).")
     else:
-        cons.append(f"Design is excessively cluttered with chaotic line formations (Edge density: {edge_density:.3f}).")
+        pros.append(f"Smooth, balanced contrast depth (Contrast: {contrast:.1f}).")
         
-    # 4. Layout & Contours
-    layout_pts = max(0, 2.0 - abs(0.15 - text_density)*10.0)
-    total_score += layout_pts
-    if 0.05 < text_density < 0.25:
-        pros.append(f"Professional text-to-space ratio ({text_density*100:.1f}% physical footprint).")
+    # 3. Overall Color Vibrancy
+    if std_s < 40:
+        total_score -= 1.0
+        cons.append(f"Colors lack punch and are generally dull (Saturation Variance: {std_s:.1f}).")
+    elif std_s > 140:
+        total_score -= 1.0
+        cons.append(f"Colors bleed intensely and are over-saturated (Variance: {std_s:.1f}).")
     else:
-        cons.append(f"Content distribution completely crowds the visual hierarchy ({text_density*100:.1f}% footprint).")
+        pros.append(f"Optimal vibrant branding colors detected (Variance: {std_s:.1f}).")
         
-    # 5. CTA Extraction 
-    if cta_score == 2:
-        total_score += 2.0
-        pros.append("Distinct geometric Call-to-Action (CTA) target isolated in lower third.")
+    # 4. Neural Clutter (Edge Density)
+    if edge_density > 0.07:
+        total_score -= 3.0
+        cons.append(f"Extremely chaotic visual UI clutter (Density: {edge_density:.3f}).")
+    elif edge_density > 0.05:
+        total_score -= 1.5
+        cons.append(f"Borderline cluttered background vectors (Density: {edge_density:.3f}).")
     else:
-        cons.append("Failed to locate a primary geometric Call-to-Action button.")
+        pros.append(f"Clean design utilizing proper negative space (Density: {edge_density:.3f}).")
         
-    total_score = round(max(1.0, min(10.0, total_score + 1.0)), 1) # Scale floor buffer
+    # 5. Structure Footprint
+    if text_density > 0.85:
+        total_score -= 3.0
+        cons.append(f"Shapes and text completely crowd the visual frame ({text_density*100:.1f}% footprint).")
+    elif text_density > 0.65:
+        total_score -= 1.0
+        cons.append(f"Content structure is fairly heavy, consider padding ({text_density*100:.1f}% footprint).")
+    else:
+        pros.append(f"Professional text-to-space layout grouping ({text_density*100:.1f}% footprint).")
+
+    # Hard scale and round
+    total_score = round(max(1.0, min(10.0, total_score)), 1)
     
     suggestions = []
-    if std_s > 80: suggestions.append("Lower your core saturation; the colors are bleeding and hurting the eyes.")
-    if mean_v > 140: suggestions.append("Your exposure is blown out. Lower the brightness by 15-20% to regain depth.")
-    if contrast > 80: suggestions.append("The raw contrast is too harsh between objects. Soften shadows and typography.")
-    if edge_density >= 0.0325: suggestions.append("Erase unnecessary background textures to clear up overwhelming noise.")
-    if cta_score == 0: suggestions.append("Draft a highly visible rectangular 'Shop Now' block anchored at the bottom.")
-
+    if mean_v > 220: suggestions.append("Your exposure is blown out. Lower the brightness by 10-15% to regain depth.")
+    if contrast > 80: suggestions.append("The raw contrast is too harsh between foreground objects. Soften lighting.")
+    if edge_density > 0.05: suggestions.append("Clean up background noise/patterns. Embrace empty visual space.")
+    if text_density > 0.65: suggestions.append("Consolidate your layout to Rule of Thirds grids. Leave negative padding.")
     
     return {
         "score": total_score,
@@ -116,13 +125,11 @@ def index():
     if request.method == 'POST':
         file = request.files['file']
         if file and file.filename:
-            # Append timestamp to completely bypass browser caching bugs for identical filenames
-            unique_filename = str(int(time.time())) + "_" + secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            file.save(filepath)
-            
-            result = analyze_ad(filepath)
-            return render_template('index.html', result=result, filename=unique_filename)
+            img_bytes = file.read()
+            result = analyze_ad(img_bytes)
+            img_b64 = base64.b64encode(img_bytes).decode('utf-8')
+            mime = file.mimetype if file.mimetype else 'image/jpeg'
+            return render_template('index.html', result=result, image_data=f"data:{mime};base64,{img_b64}")
     return render_template('index.html', result=None)
 
 if __name__ == '__main__':
