@@ -3,303 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Ad Validator | AI Agent</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>AI Visual Validator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+        /* CSS Reset & Variables */
         :root {
-            --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
+            --bg: #050505;
+            --glass: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-blue: #00f0ff;
+            --neon-purple: #8a2be2;
+            --neon-pink: #ff0055;
+            --success: #00ff88;
+            --danger: #ff3366;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
         }
 
+        * { box-sizing: border-box; }
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.08), transparent 25%);
             color: var(--text-main);
             margin: 0;
             padding: 40px 20px;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Abstract glowing orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 20s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 300px; height: 300px; background: rgba(0, 240, 255, 0.15); top: -100px; left: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: rgba(255, 0, 85, 0.1); bottom: -100px; right: -100px; animation-delay: -5s;}
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 50px) rotate(180deg); }
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: auto;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.6s ease-out;
+            position: relative;
+            z-index: 10;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
+        .header { text-align: center; margin-bottom: 50px; animation: slideDown 0.8s ease-out; }
         .header h1 {
-            font-size: 2.8em;
+            font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(to right, #60a5fa, #c084fc);
+            margin: 0 0 15px 0;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple), var(--neon-pink));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
+        .header p { color: var(--text-muted); font-size: 1.2rem; letter-spacing: 1px; }
 
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.1em;
-            font-weight: 300;
-        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .upload-form {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.03);
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
             padding: 40px;
-            border-radius: 16px;
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .upload-section {
+            text-align: center;
             margin-bottom: 40px;
+            animation: fadeIn 1s ease-out 0.3s both;
         }
 
-        .upload-form:hover {
-            border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.05);
+        .upload-box {
+            border: 2px dashed rgba(0, 240, 255, 0.3);
+            border-radius: 16px;
+            padding: 50px 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        input[type="file"] {
-            display: block;
-            margin: 0 auto 20px auto;
-            color: var(--text-muted);
+        .upload-box:hover {
+            border-color: var(--neon-blue);
+            background: rgba(0, 240, 255, 0.02);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
         }
 
-        input[type="file"]::file-selector-button {
-            background: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 10px 20px;
-            border-radius: 8px;
+        input[type="file"] { display: none; }
+        
+        .file-label {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
             cursor: pointer;
-            transition: all 0.2s;
-            margin-right: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: all 0.3s ease;
         }
+        .file-label:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
-        input[type="file"]::file-selector-button:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        input[type="submit"] {
-            background: linear-gradient(to right, #3b82f6, #2563eb);
+        .submit-btn {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
             color: white;
             border: none;
-            padding: 15px 35px;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 240, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.4);
         }
 
-        input[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-        }
+        /* Loading Screen */
+        #loader { display: none; margin-top: 20px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(0,240,255,0.1); border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto;}
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .result-section {
+        /* Results Layout */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
             animation: fadeIn 0.8s ease-out;
         }
-
-        .image-preview {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .image-preview img {
-            max-width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-        }
-
-        .score-card {
-            text-align: center;
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-        }
-
-        .score-value {
-            font-size: 4em;
-            font-weight: 800;
-            margin: 10px 0;
-            text-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-
-        .score-good { color: var(--success); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);}
-        .score-bad { color: var(--danger); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);}
-
-        .metrics {
-            color: var(--text-muted);
-            font-size: 0.9em;
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
         
-        .metric-badge {
-            background: rgba(0,0,0,0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+        @media(max-width: 900px) { .results-grid { grid-template-columns: 1fr; } }
+
+        .image-col { text-align: center; }
+        .image-col img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
-        .lists-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
+        .score-circle {
+            width: 180px; height: 180px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(20,20,20,0.8), rgba(40,40,40,0.8));
+            border: 2px solid var(--glass-border);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.3);
+            position: relative;
         }
 
-        .list-box {
+        .score-circle::before {
+            content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border-radius: 50%; z-index: -1;
+            background: linear-gradient(45deg, var(--neon-blue), transparent, var(--neon-purple));
+            animation: spin 4s linear infinite;
+        }
+
+        .score-number { font-size: 4rem; font-weight: 800; line-height: 1; }
+        .score-good .score-number { color: var(--success); text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+        .score-bad .score-number { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.4); }
+        .score-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;}
+
+        .metrics-row { display: flex; justify-content: space-around; font-size: 0.85rem; color: var(--text-muted); margin-top: 20px;}
+        
+        .lists-col { display: flex; flex-direction: column; gap: 20px; }
+
+        .data-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
             padding: 25px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            background: rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
         }
+        .data-card:hover { background: rgba(255,255,255,0.02); }
 
-        .list-box:hover {
-            transform: translateY(-5px);
-        }
+        .data-card h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; font-size: 1.3rem; letter-spacing: 1px;}
+        .pros-card h3 { color: var(--success); }
+        .cons-card h3 { color: var(--danger); }
+        .sugg-card h3 { color: var(--neon-blue); }
 
-        .pros h3 { color: var(--success); margin-top: 0; display: flex; align-items: center; gap: 8px;}
-        .cons h3 { color: var(--danger); margin-top: 0; display: flex; align-items: center; gap: 8px;}
-        .sugg h3 { color: var(--warning); margin-top: 0; display: flex; align-items: center; gap: 8px;}
-        
-        .sugg-box {
-            grid-column: 1 / -1;
-            padding: 25px;
-            border-radius: 16px;
-            background: rgba(245, 158, 11, 0.05);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
+        ul { padding-left: 20px; margin: 0;}
+        li { margin-bottom: 12px; line-height: 1.6; color: #d1d5db; font-size: 0.95rem;}
 
-        .redesign-box {
-            grid-column: 1 / -1;
-            padding: 30px;
-            border-radius: 16px;
-            background: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            margin-top: 10px;
-        }
-
-        .redesign-box h3 {
-            color: #60a5fa;
-            margin-top: 0;
-            font-size: 1.4em;
-        }
-
-        ul { padding-left: 20px; margin-bottom: 0;}
-        li { margin-bottom: 12px; color: #cbd5e1; line-height: 1.5; }
-        
-        strong { color: var(--text-main); }
-
-        @media (max-width: 768px) {
-            .lists-grid { grid-template-columns: 1fr; }
-            .header h1 { font-size: 2em; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
     <div class="container">
         <div class="header">
-            <h1>Ad Design Validator</h1>
-            <p>100% Offline • Pure OpenCV Heuristics • Zero APIs</p>
+            <h1>Nexus Visual Engine</h1>
+            <p>Intelligent, Offline Computer Vision Ad Scoring</p>
         </div>
-        
-        <div class="upload-form">
-            <form method="POST" enctype="multipart/form-data">
-                <input type="file" name="file" accept="image/*" required>
-                <input type="submit" value="Analyze Design Architecture">
+
+        <div class="glass-panel upload-section">
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-box">
+                    <label class="file-label">
+                        <input type="file" name="file" id="fileInput" accept="image/*" required onchange="updateFilename()">
+                        <span id="fileText">CHOOSE DESIGN FILE</span>
+                    </label>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 15px;">JPEG, PNG instantly processed strictly offline via OpenCV.</p>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Initialize Neural Scan</button>
+                <div id="loader">
+                    <div class="spinner"></div>
+                    <p style="color: var(--neon-blue); letter-spacing: 2px; font-size: 0.9rem; margin-top:15px; font-weight: 600;">EXECUTING MORPHOLOGICAL HEURISTICS...</p>
+                </div>
             </form>
         </div>
 
         {% if result %}
-        <div class="result-section">
-            <div class="image-preview">
+        <div class="glass-panel results-grid">
+            <div class="image-col">
                 <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Analyzed Ad">
-            </div>
-            
-            <div class="score-card">
-                <h2 style="margin: 0; color: var(--text-muted); font-weight: 400; font-size: 1.2em;">QUALITY SCORE</h2>
-                <div class="score-value {% if result.score >= 6 %}score-good{% else %}score-bad{% endif %}">
-                    {{ result.score }} <span style="font-size: 0.4em; color: var(--text-muted); text-shadow: none;">/ 10</span>
+                <div class="score-circle {% if result.score >= 6 %}score-good{% else %}score-bad{% endif %}">
+                    <div class="score-number">{{ result.score }}</div>
+                    <div class="score-label">out of 10</div>
                 </div>
-                
-                <div class="metrics">
-                    <span class="metric-badge">Edge Density: {{ result.visual_metrics.edge_density }}</span>
-                    <span class="metric-badge">Contrast: {{ result.visual_metrics.contrast }}</span>
-                    <span class="metric-badge">Content Area: {{ result.text_density }}%</span>
+                <div class="metrics-row">
+                    <span>VAR: {{ result.stats.v_mean }}</span>
+                    <span>CONTOURS: {{ result.stats.contours }}</span>
                 </div>
             </div>
-            
-            <div class="lists-grid">
-                <div class="list-box pros">
-                    <h3>✓ Visual Strengths</h3>
+
+            <div class="lists-col">
+                <div class="data-card pros-card">
+                    <h3>⚡ Optimal Signatures</h3>
                     <ul>
                         {% if result.pros %}{% for p in result.pros %}<li>{{ p }}</li>{% endfor %}
-                        {% else %}<li>No major visual strengths mathematically detected.</li>{% endif %}
-                    </ul>
-                </div>
-                
-                <div class="list-box cons">
-                    <h3>✕ Visual Weaknesses</h3>
-                    <ul>
-                        {% if result.cons %}{% for c in result.cons %}<li>{{ c }}</li>{% endfor %}
-                        {% else %}<li>None detected! Flawless design mechanics.</li>{% endif %}
+                        {% else %}<li>No mathematically significant strengths detected.</li>{% endif %}
                     </ul>
                 </div>
 
-                <div class="sugg-box">
-                    <div class="sugg">
-                        <h3 style="color: var(--warning); margin-top: 0;">💡 Improvement Suggestions</h3>
-                        <ul>
-                            {% if result.suggestions %}{% for s in result.suggestions %}<li>{{ s }}</li>{% endfor %}
-                            {% else %}<li>Great job! No major suggestions required.</li>{% endif %}
-                        </ul>
-                    </div>
+                <div class="data-card cons-card">
+                    <h3>⚠️ Structural Flaws</h3>
+                    <ul>
+                        {% if result.cons %}{% for c in result.cons %}<li>{{ c }}</li>{% endfor %}
+                        {% else %}<li>Zero flaws detected. Perfect geometric alignment.</li>{% endif %}
+                    </ul>
                 </div>
-                
-                <div class="redesign-box">
-                    <h3>🎨 Redesigned Concept (Layout Blueprint)</h3>
-                    <p><strong>Headline:</strong> High contrast typography, max 6 words.</p>
-                    <p><strong>CTA:</strong> Place a standalone rectangular button prominently in the bottom 30%.</p>
-                    <p><strong>Color Palette:</strong> 2 primary branding colors to enforce cohesive contrast.</p>
-                    <p><strong>Layout Structure:</strong> Rule of Thirds - Keep the primary visual isolated and aligned, leaving a full third of pristine negative space for messaging.</p>
-                    <p><strong>Design Rationale:</strong> Eliminating overwhelming clutter allows visual processing to easily identify and click the CTA target block.</p>
+
+                <div class="data-card sugg-card">
+                    <h3>🎯 Actionable Directives</h3>
+                    <ul>
+                        {% if result.suggestions %}{% for s in result.suggestions %}<li>{{ s }}</li>{% endfor %}
+                        {% else %}<li>Deploy immediately. No adjustments recommended.</li>{% endif %}
+                    </ul>
                 </div>
             </div>
         </div>
+        <script>
+            // Scroll to results automatically
+            window.scrollTo({ top: document.querySelector('.results-grid').offsetTop - 40, behavior: 'smooth'});
+        </script>
         {% endif %}
     </div>
+
+    <script>
+        function updateFilename() {
+            const input = document.getElementById('fileInput');
+            const text = document.getElementById('fileText');
+            if(input.files.length > 0) {
+                text.innerText = "SELECTED: " + input.files[0].name.toUpperCase();
+                text.style.color = "var(--neon-blue)";
+            }
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+        });
+    </script>
 </body>
 </html>
