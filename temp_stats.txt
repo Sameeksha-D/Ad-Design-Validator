@@ -1,4 +1,0 @@
-GOOD 1: std_s=110.7 mean_v=225.3 contrast=69.0 edge=0.0509 txt_dens=0.759
-GOOD 3: std_s=56.6 mean_v=239.3 contrast=48.7 edge=0.0279 txt_dens=0.798
-BAD 2: std_s=107.1 mean_v=218.1 contrast=73.0 edge=0.0786 txt_dens=0.918
-BAD 4: std_s=91.1 mean_v=222.2 contrast=72.5 edge=0.0594 txt_dens=0.955
